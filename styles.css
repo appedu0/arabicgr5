@@ -247,12 +247,13 @@ h1 span { color: var(--gold); }
 }
 
 @media (max-width: 680px) {
-  .hero-screen { height: auto; min-height: 100svh; }
-  .hero-bg { object-position: 37% center; }
-  .hero-shade { background: linear-gradient(0deg, rgba(4,28,56,.93) 0, rgba(4,28,56,.66) 62%, rgba(4,28,56,.18) 100%); }
+  .hero-screen { height: auto; min-height: 100svh; background: linear-gradient(180deg, #0b4776, #062744); }
+  .hero-bg { position: relative; inset: auto; z-index: 0; display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; object-position: center; }
+  .hero-shade { inset: 0 0 auto; z-index: 1; height: 56.25vw; background: linear-gradient(180deg, rgba(4,28,56,.5), rgba(4,28,56,.04) 65%, rgba(4,28,56,.28)); pointer-events: none; }
+  .hero-screen .topbar { position: absolute; top: 0; right: 0; left: 0; z-index: 3; }
   .topbar, .app-header { padding: 14px 18px; }
   .brand-pill > span:last-child { display: none; }
-  .student-panel { position: relative; top: auto; right: auto; width: min(470px, calc(100% - 32px)); margin: 18vh auto 84px; transform: none; }
+  .student-panel { position: relative; top: auto; right: auto; z-index: 2; width: min(470px, calc(100% - 28px)); margin: 16px auto 84px; transform: none; }
   .glass-card { padding: 24px 20px; border-radius: 25px; }
   .developer-signature { bottom: 17px; }
   .app-header { align-items: flex-start; }
