@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#082d56" />
+    <meta name="description" content="منصة الأستاذ أحمد حسن التفاعلية لمنهج اللغة العربية للصف الخامس الابتدائي." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23082d56'/%3E%3Cpath d='M12 17c8-3 14-1 20 5 6-6 12-8 20-5v31c-8-3-14-1-20 5-6-6-12-8-20-5z' fill='%23ffd36a' stroke='%23fff' stroke-width='3'/%3E%3Cpath d='M32 22v31' stroke='%23fff' stroke-width='3'/%3E%3C/svg%3E" />
+    <title>رحلة العربية | الأستاذ أحمد حسن</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="app">
+      <section class="screen hero-screen is-active" id="welcomeScreen" aria-labelledby="welcomeTitle">
+        <img class="hero-bg" src="assets/hero-arabic-adventure.webp" alt="طلاب يستكشفون عالم اللغة العربية على ضفاف النيل" />
+        <div class="hero-shade" aria-hidden="true"></div>
+
+        <header class="topbar">
+          <div class="brand-pill"><span class="brand-mark">ض</span><span>رحلة العربية</span></div>
+        </header>
+
+        <div class="student-panel glass-card">
+          <p class="eyebrow">منصة الصف الخامس التفاعلية</p>
+          <h1 id="welcomeTitle">أهلًا بك في<br /><span>رحلة العربية</span></h1>
+          <p class="welcome-copy">اجمع النجوم، افتح الشارات، واكتشف جمال لغتنا خطوةً خطوة.</p>
+
+          <form id="studentForm" class="student-form">
+            <label for="studentName">ما اسم البطل؟</label>
+            <div class="input-wrap">
+              <span aria-hidden="true">👤</span>
+              <input id="studentName" name="studentName" type="text" maxlength="40" autocomplete="name" placeholder="اكتب اسمك هنا" required />
+            </div>
+            <button class="primary-btn" type="submit"><span>ابدأ المغامرة</span><span aria-hidden="true">←</span></button>
+          </form>
+
+          <button class="teacher-link" id="teacherOpen" type="button"><span class="teacher-avatar">أ</span><span><b>تعرّف على معلمك</b><small>الأستاذ أحمد حسن عز الدين</small></span></button>
+        </div>
+
+        <footer class="developer-signature">
+          <span>مطور المنصة: <a class="developer-name" href="https://www.facebook.com/mr.mahmmd" target="_blank" rel="noopener">مستر محمد فريد</a></span>
+          <nav class="social-nav" aria-label="روابط المطور">
+            <a class="icon-link facebook" href="https://www.facebook.com/mr.mahmmd" target="_blank" rel="noopener" aria-label="صفحة المطور على فيسبوك">f</a>
+            <a class="icon-link whatsapp" href="https://wa.me/966552019074" target="_blank" rel="noopener" aria-label="واتساب مطور المنصة">
+              <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4a11 11 0 0 0-9.53 16.5L5 27l6.66-1.4A11 11 0 1 0 16 4Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M11.3 10.4c.3-.6.65-.62 1.08-.63h.37c.15 0 .38.05.58.52.2.48.7 1.7.76 1.82.06.12.1.26.02.41-.07.15-.12.24-.24.37-.12.13-.25.29-.36.39-.12.12-.24.25-.1.49.14.24.63 1.04 1.36 1.68.93.83 1.72 1.09 1.96 1.21.24.12.38.1.52-.06.14-.17.6-.7.76-.94.16-.24.32-.2.54-.12.22.08 1.39.66 1.63.78.24.12.4.18.46.28.06.1.06.58-.14 1.14-.2.56-1.17 1.07-1.61 1.14-.42.07-.97.1-1.56-.1-.36-.11-.82-.26-1.41-.51-.59-.25-2.6-.96-4.42-3.36-.5-.66-1.05-1.47-1.05-2.35 0-.87.46-1.3.85-2.1Z" fill="currentColor"/></svg>
+            </a>
+          </nav>
+        </footer>
+      </section>
+
+      <section class="screen units-screen" id="unitsScreen" aria-labelledby="unitsTitle">
+        <header class="app-header">
+          <div class="brand-pill dark"><span class="brand-mark">ض</span><span>رحلة العربية</span></div>
+          <div class="player-strip">
+            <span class="player-name">مرحبًا، <b id="displayName">بطل العربية</b></span>
+            <span class="score-chip">⭐ <b id="starsCount">0</b></span>
+            <span class="score-chip">🪙 <b id="coinsCount">0</b></span>
+          </div>
+        </header>
+
+        <div class="units-intro">
+          <div>
+            <p class="eyebrow navy">خريطة الفصل الدراسي الأول</p>
+            <h2 id="unitsTitle">اختر وحدتك، وابدأ التحدي!</h2>
+            <p>ثلاث وحدات، وفي كل درس محطات قصيرة تقودك من الفضول إلى الإنجاز.</p>
+          </div>
+          <button class="teacher-link compact" id="teacherOpenUnits" type="button"><span class="teacher-avatar">أ</span><span><b>تعرّف على معلمك</b><small>خبرة تتجاوز 18 عامًا</small></span></button>
+        </div>
+
+        <div class="units-grid" id="unitsGrid"></div>
+
+        <footer class="units-footer">
+          <span>مطور المنصة: <a class="developer-name" href="https://www.facebook.com/mr.mahmmd" target="_blank" rel="noopener">مستر محمد فريد</a></span>
+          <nav class="social-nav" aria-label="روابط المطور">
+            <a class="icon-link facebook" href="https://www.facebook.com/mr.mahmmd" target="_blank" rel="noopener" aria-label="صفحة المطور على فيسبوك">f</a>
+            <a class="icon-link whatsapp" href="https://wa.me/966552019074" target="_blank" rel="noopener" aria-label="واتساب مطور المنصة"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4a11 11 0 0 0-9.53 16.5L5 27l6.66-1.4A11 11 0 1 0 16 4Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M11.3 10.4c.3-.6.65-.62 1.08-.63h.37c.15 0 .38.05.58.52.2.48.7 1.7.76 1.82.06.12.1.26.02.41-.07.15-.12.24-.24.37-.12.13-.25.29-.36.39-.12.12-.24.25-.1.49.14.24.63 1.04 1.36 1.68.93.83 1.72 1.09 1.96 1.21.24.12.38.1.52-.06.14-.17.6-.7.76-.94.16-.24.32-.2.54-.12.22.08 1.39.66 1.63.78.24.12.4.18.46.28.06.1.06.58-.14 1.14-.2.56-1.17 1.07-1.61 1.14-.42.07-.97.1-1.56-.1-.36-.11-.82-.26-1.41-.51-.59-.25-2.6-.96-4.42-3.36-.5-.66-1.05-1.47-1.05-2.35 0-.87.46-1.3.85-2.1Z" fill="currentColor"/></svg></a>
+          </nav>
+        </footer>
+      </section>
+
+      <section class="screen unit-screen" id="unitScreen" aria-labelledby="unitTitle">
+        <header class="app-header">
+          <button class="nav-back" id="backToUnits" type="button">→ خريطة الوحدات</button>
+          <div class="player-strip">
+            <span class="player-name"><b class="header-player-name">بطل العربية</b></span>
+            <span class="score-chip">⭐ <b class="header-stars">0</b></span>
+            <span class="score-chip">🪙 <b class="header-coins">0</b></span>
+          </div>
+        </header>
+        <div class="unit-hero" id="unitHero">
+          <img id="unitHeroImage" src="assets/unit-1-nile.webp" alt="" />
+          <div class="unit-hero-overlay"></div>
+          <div class="unit-hero-copy"><p id="unitLabel">الوحدة الأولى</p><h2 id="unitTitle">نيلنا أمانة</h2><span id="unitProgressLabel">ابدأ أول درس في رحلتك</span></div>
+        </div>
+        <div class="lessons-wrap">
+          <div class="section-heading"><div><p class="eyebrow navy">دروس الوحدة</p><h3>اختر الدرس ثم اجتز المحطات بالترتيب</h3></div><div class="unit-progress"><span id="unitPercent">٠٪</span><div class="progress-track"><i id="unitProgressBar"></i></div></div></div>
+          <div class="lessons-grid" id="lessonsGrid"></div>
+        </div>
+        <footer class="units-footer"><span>مطور المنصة: <a class="developer-name" href="https://www.facebook.com/mr.mahmmd" target="_blank" rel="noopener">مستر محمد فريد</a></span><nav class="social-nav" aria-label="روابط المطور"><a class="icon-link facebook" href="https://www.facebook.com/mr.mahmmd" target="_blank" rel="noopener" aria-label="صفحة المطور على فيسبوك">f</a><a class="icon-link whatsapp" href="https://wa.me/966552019074" target="_blank" rel="noopener" aria-label="واتساب مطور المنصة"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4a11 11 0 0 0-9.53 16.5L5 27l6.66-1.4A11 11 0 1 0 16 4Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M11.3 10.4c.3-.6.65-.62 1.08-.63h.37c.15 0 .38.05.58.52.2.48.7 1.7.76 1.82.06.12.1.26.02.41-.07.15-.12.24-.24.37-.12.13-.25.29-.36.39-.12.12-.24.25-.1.49.14.24.63 1.04 1.36 1.68.93.83 1.72 1.09 1.96 1.21.24.12.38.1.52-.06.14-.17.6-.7.76-.94.16-.24.32-.2.54-.12.22.08 1.39.66 1.63.78.24.12.4.18.46.28.06.1.06.58-.14 1.14-.2.56-1.17 1.07-1.61 1.14-.42.07-.97.1-1.56-.1-.36-.11-.82-.26-1.41-.51-.59-.25-2.6-.96-4.42-3.36-.5-.66-1.05-1.47-1.05-2.35 0-.87.46-1.3.85-2.1Z" fill="currentColor"/></svg></a></nav></footer>
+      </section>
+
+      <section class="screen lesson-screen" id="lessonScreen" aria-labelledby="lessonTitle">
+        <header class="app-header lesson-header">
+          <button class="nav-back" id="backToUnit" type="button">→ دروس الوحدة</button>
+          <div class="lesson-mini-title"><span id="lessonUnitName">الوحدة</span><b id="lessonTitle">عنوان الدرس</b></div>
+          <div class="player-strip compact-scores"><span class="score-chip">⭐ <b class="header-stars">0</b></span><span class="score-chip">🪙 <b class="header-coins">0</b></span></div>
+        </header>
+
+        <div class="lesson-layout">
+          <aside class="station-rail" aria-label="محطات الدرس">
+            <div class="rail-head"><span>مسار الحصة</span><b id="lessonProgressText">١ من ٩</b></div>
+            <div class="station-list" id="stationList"></div>
+          </aside>
+
+          <section class="station-stage" id="stationStage" aria-live="polite"></section>
+        </div>
+      </section>
+    </main>
+
+    <dialog class="teacher-dialog" id="teacherDialog">
+      <button class="dialog-close" id="teacherClose" type="button" aria-label="إغلاق">×</button>
+      <img src="assets/teacher-ahmed-hassan.jpeg" alt="بطاقة تعريف الأستاذ أحمد حسن عز الدين" />
+      <div class="teacher-copy">
+        <p class="eyebrow navy">تعرّف على معلمك</p>
+        <h2>أحمد حسن عز الدين</h2>
+        <p class="teacher-role">معلم لغة عربية وقرآن كريم</p>
+        <p>خبرة تتجاوز 18 عامًا، يجمع بين التحفيز والإبداع وبناء الشخصية، ويؤمن بأن كل طالب قادر على النجاح والتألق.</p>
+        <div class="teacher-goals"><span>📘 تنمية اللغة والتفكير</span><span>💡 غرس القيم والإبداع</span><span>🎯 متابعة تحقق النتائج</span></div>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="curriculum.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
