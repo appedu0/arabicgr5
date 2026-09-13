@@ -14,7 +14,9 @@ const TRANSITIONS = [
 ];
 
 function parseSaved(value) { try { return value ? JSON.parse(value) : {}; } catch { return {}; } }
-const state = Object.assign({name:"",stars:0,coins:0,view:"welcomeScreen",currentUnit:1,currentLesson:1,currentStation:0,activeLessonKey:"",challengeIndex:0,completedStations:[],completedLessons:[],priorAnswers:{},applications:{},challengeAnswers:{}}, parseSaved(localStorage.getItem(STORAGE_KEY)));
+const state = Object.assign({name:"",stars:0,coins:0,view:"welcomeScreen",currentUnit:1,currentLesson:1,currentStation:0,activeLessonKey:"",challengeIndex:0,completedStations:[],completedLessons:[],priorAnswers:{},discussionAnswers:{},groupAnswers:{},applications:{},challengeAnswers:{},rulesVersion:0}, parseSaved(localStorage.getItem(STORAGE_KEY)));
+// إعادة ضبط الإنجاز القديم مرة واحدة لأن النسخة السابقة كانت تسمح بتجاوز شروط المحطات.
+if(state.rulesVersion!==3){Object.assign(state,{stars:0,coins:0,currentStation:0,challengeIndex:0,completedStations:[],completedLessons:[],challengeAnswers:{},rulesVersion:3});localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
 // الإصدار الجديد لا يعدّ الدرس مكتملًا إلا إذا أُجيب عن تحدي الأسئلة الثلاثين كاملًا.
 state.completedLessons=state.completedLessons.filter(key=>Object.keys(state.challengeAnswers[key]||{}).length===30);
 const screens = [...document.querySelectorAll(".screen")];
@@ -26,6 +28,8 @@ function unit() { return CURRICULUM.find(x => x.id === +state.currentUnit) || CU
 function lesson() { return unit().lessons.find(x => x.id === +state.currentLesson) || unit().lessons[0]; }
 function lessonKey(u=state.currentUnit,l=state.currentLesson) { return `u${u}-l${l}`; }
 function stationKey(s,u=state.currentUnit,l=state.currentLesson) { return `${lessonKey(u,l)}-s${s}`; }
+function stationDone(index){return state.completedStations.includes(stationKey(index));}
+function stationUnlocked(index){return index===0||STATIONS.slice(0,index).every((_,i)=>stationDone(i));}
 
 function showScreen(id, persist=true) {
   screens.forEach(x => x.classList.toggle("is-active", x.id === id));
@@ -83,14 +87,16 @@ function openLesson(id) {
 function markStation(index) {
   const key=stationKey(index);
   if (!state.completedStations.includes(key)) {
-    state.completedStations.push(key); state.stars+=2; state.coins+=5; player(); save(); toast("رائع! +٢ نجمة و +٥ عملات 🏅");
+    state.completedStations.push(key); state.stars+=2; state.coins+=5; player(); save(); renderRail();
+    const next=$("stationNext")||$("exitNext");if(next)next.disabled=false;
+    toast("أتممت المحطة! +٢ نجمة و +٥ عملات 🏅");
   }
 }
 
 function renderRail() {
   $("stationList").innerHTML=STATIONS.map(([icon,title],i)=>{
-    const done=state.completedStations.includes(stationKey(i)), locked=i===8&&!state.completedStations.includes(stationKey(7));
-    return `<button class="station-step ${i===state.currentStation?"is-active":""} ${done?"is-done":""} ${locked?"is-locked":""}" type="button" data-station="${i}" ${locked?"disabled title=\"أكمل تذكرة الخروج أولًا\"":""}><span>${done?"✓":locked?"🔒":icon}</span><b>${title}</b></button>`;
+    const done=stationDone(i), locked=!stationUnlocked(i);
+    return `<button class="station-step ${i===state.currentStation?"is-active":""} ${done?"is-done":""} ${locked?"is-locked":""}" type="button" data-station="${i}" ${locked?"disabled title=\"أكمل المحطة السابقة أولًا\"":""}><span>${done?"✓":locked?"🔒":icon}</span><b>${title}</b></button>`;
   }).join("");
   document.querySelectorAll("[data-station]").forEach(b=>b.onclick=()=>{state.currentStation=+b.dataset.station;save();renderStation();});
 }
@@ -183,10 +189,10 @@ function whatsApp(l,u) {
 function content(i,l,u) {
   if(i===0)return `<div class="activity-card curiosity-card"><img src="${u.cover}" alt="مشهد يمهّد لدرس ${l.title}"><div><h3>لغز البداية</h3><p>${l.curiosity}</p><button class="reveal-btn" id="revealPrompt" type="button">فكّر ثم اكشف المفتاح</button><p class="hidden-hint" id="promptHint">اربط اللغز بعنوان الدرس: <b>${l.title}</b></p></div></div>`;
   if(i===1)return `<div class="activity-card"><h3>استدعِ خبرتك السابقة</h3><p>${l.prior}</p><textarea class="reflection-input" id="priorAnswer" rows="4" placeholder="دوّن أفكارك هنا…">${safeText(state.priorAnswers[lessonKey()]||"")}</textarea><button class="save-note" id="savePrior" type="button">احفظ فكرتي</button></div>`;
-  if(i===2)return `<div class="video-frame"><iframe src="https://www.youtube.com/embed/${l.video}" title="شرح درس ${l.title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>${l.resources.length?`<div class="resource-links">${l.resources.map(r=>`<a href="https://youtu.be/${r[1]}" target="_blank" rel="noopener">▶ ${r[0]}</a>`).join("")}</div>`:""}`;
+  if(i===2)return `<div class="video-frame"><iframe src="https://www.youtube.com/embed/${l.video}" title="شرح درس ${l.title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>${l.resources.length?`<div class="resource-links">${l.resources.map(r=>`<a href="https://youtu.be/${r[1]}" target="_blank" rel="noopener">▶ ${r[0]}</a>`).join("")}</div>`:""}<div class="activity-card video-confirm"><h3>هل أكملت مشاهدة فيديو شرح الدرس؟</h3><p>اختر «نعم» فقط بعد مشاهدة الفيديو كاملًا.</p><div class="confirm-options"><button type="button" data-video-confirm="yes">نعم، أكملت الفيديو ✓</button><button type="button" data-video-confirm="no">لا، سأكمل المشاهدة</button></div><p class="feedback" id="videoFeedback"></p></div>`;
   if(i===3)return quizMarkup(l.check,"checkQuiz");
-  if(i===4)return `<div class="activity-card"><h3>الأفكار الرئيسة</h3><ul class="ideas-list">${l.ideas.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="activity-card discussion-card"><h3>سؤال المناقشة</h3><p>${l.discussion}</p></div>`;
-  if(i===5)return `<div class="activity-card"><h3>مهمة الفريق</h3><ol class="group-steps">${l.group.map(x=>`<li>${x}</li>`).join("")}</ol><p class="team-badge">🤝 نجاحكم في الاستماع لبعضكم جزء من التحدي.</p></div>`;
+  if(i===4)return `<div class="activity-card"><h3>الأفكار الرئيسة</h3><ul class="ideas-list">${l.ideas.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="activity-card discussion-card"><h3>سؤال المناقشة</h3><p>${l.discussion}</p><textarea class="reflection-input" id="discussionAnswer" rows="4" placeholder="اكتب رأيك مدعومًا بفكرة…">${safeText(state.discussionAnswers[lessonKey()]||"")}</textarea><button class="save-note" id="saveDiscussion" type="button">اعتمد إجابتي</button></div>`;
+  if(i===5)return `<div class="activity-card"><h3>مهمة الفريق</h3><ol class="group-steps">${l.group.map(x=>`<li>${x}</li>`).join("")}</ol><p class="team-badge">🤝 نجاحكم في الاستماع لبعضكم جزء من التحدي.</p><textarea class="reflection-input" id="groupAnswer" rows="4" placeholder="اكتب النتيجة التي توصل إليها فريقك…">${safeText(state.groupAnswers[lessonKey()]||"")}</textarea><button class="save-note" id="saveGroup" type="button">احفظ نتيجة الفريق</button></div>`;
   if(i===6)return `<div class="activity-card"><h3>استخدم ما تعلمته</h3><p>${l.application}</p><textarea class="reflection-input" id="applicationAnswer" rows="5" placeholder="اكتب تطبيقك هنا…">${safeText(state.applications[lessonKey()]||"")}</textarea><button class="save-note" id="saveApplication" type="button">احفظ تطبيقي</button></div>`;
   if(i===7)return `${quizMarkup(l.exit,"exitQuiz")}<div class="completion-burst"><strong>تذكرة العبور إلى التحدي</strong><p>أجب إجابة صحيحة لتفتح محطة الثلاثين سؤالًا.</p></div>`;
   return challengeMarkup(l,u);
@@ -194,11 +200,12 @@ function content(i,l,u) {
 
 function actions(i){
   if(i===8)return `<div class="station-actions"><button class="prev-station" type="button" data-move="prev">تذكرة الخروج</button></div>`;
-  if(i===7)return `<div class="station-actions"><button class="prev-station" type="button" data-move="prev">المحطة السابقة</button><button class="next-station" id="exitNext" type="button" data-move="next" ${state.completedStations.includes(stationKey(7))?"":"disabled"}>افتح تحدي ٣٠ سؤالًا ←</button></div>`;
-  return `<div class="station-actions">${i?`<button class="prev-station" type="button" data-move="prev">المحطة السابقة</button>`:`<span></span>`}<button class="next-station" type="button" data-move="next">أكملت المحطة • تابع ←</button></div>`;
+  if(i===7)return `<div class="station-actions"><button class="prev-station" type="button" data-move="prev">المحطة السابقة</button><button class="next-station" id="exitNext" type="button" data-move="next" ${stationDone(7)?"":"disabled"}>افتح تحدي ٣٠ سؤالًا ←</button></div>`;
+  return `<div class="station-actions">${i?`<button class="prev-station" type="button" data-move="prev">المحطة السابقة</button>`:`<span></span>`}<button class="next-station" id="stationNext" type="button" data-move="next" ${stationDone(i)?"":"disabled"}>تابع إلى المحطة التالية ←</button></div>`;
 }
 
 function renderStation(){
+  if(!stationUnlocked(state.currentStation)){state.currentStation=STATIONS.findIndex((_,i)=>!stationDone(i));if(state.currentStation<0)state.currentStation=8;save();}
   const l=lesson(),u=unit(),i=state.currentStation,m=STATIONS[i];
   $("lessonProgressText").textContent=`${digits(i+1)} من ٩`; renderRail();
   $("stationStage").innerHTML=`<div class="station-topline"><div class="station-kicker"><span class="station-icon">${m[0]}</span><span>المحطة ${digits(i+1)} • ${m[1]}</span></div><span class="page-ref">الكتاب: ص ${digits(l.page)}</span></div><h2>${l.title}</h2><p class="transition-line">${TRANSITIONS[i]}</p>${content(i,l,u)}${actions(i)}`;
@@ -246,10 +253,13 @@ function bindChallenge(l,u){
 }
 
 function bindStation(i,l,u){
-  document.querySelectorAll("[data-move]").forEach(b=>b.onclick=()=>{if(b.dataset.move==="next"){markStation(i);state.currentStation=Math.min(8,i+1);}else state.currentStation=Math.max(0,i-1);save();renderStation();});
-  if(i===0)$("revealPrompt").onclick=()=>$("promptHint").classList.add("show");
+  document.querySelectorAll("[data-move]").forEach(b=>b.onclick=()=>{if(b.dataset.move==="next"){if(!stationDone(i))return toast("أكمل مهمة المحطة أولًا.");state.currentStation=Math.min(8,i+1);}else state.currentStation=Math.max(0,i-1);save();renderStation();});
+  if(i===0)$("revealPrompt").onclick=()=>{$("promptHint").classList.add("show");markStation(i);};
   if(i===1)$("savePrior").onclick=()=>{const v=$("priorAnswer").value.trim();if(!v)return toast("اكتب فكرة قصيرة أولًا.");state.priorAnswers[lessonKey()]=v;markStation(i);save();toast("حُفظت فكرتك الأولى 🧠");};
+  if(i===2)document.querySelectorAll("[data-video-confirm]").forEach(b=>b.onclick=()=>{if(b.dataset.videoConfirm==="no"){if($("videoFeedback"))$("videoFeedback").textContent="أكمل مشاهدة الفيديو، ثم اختر نعم.";return toast("شاهد الفيديو كاملًا أولًا.");}if($("videoFeedback"))$("videoFeedback").textContent="رائع، تم تسجيل إكمالك للفيديو ⭐";markStation(i);});
   if(i===3)bindQuiz("checkQuiz",l.check,()=>markStation(i));
+  if(i===4)$("saveDiscussion").onclick=()=>{const v=$("discussionAnswer").value.trim();if(v.length<5)return toast("اكتب إجابة واضحة من خمس حروف على الأقل.");state.discussionAnswers[lessonKey()]=v;markStation(i);save();toast("تم اعتماد إجابتك في المناقشة 💬");};
+  if(i===5)$("saveGroup").onclick=()=>{const v=$("groupAnswer").value.trim();if(v.length<5)return toast("اكتب نتيجة عمل المجموعة أولًا.");state.groupAnswers[lessonKey()]=v;markStation(i);save();toast("تم حفظ نتيجة الفريق 🤝");};
   if(i===6)$("saveApplication").onclick=()=>{const v=$("applicationAnswer").value.trim();if(!v)return toast("اكتب تطبيقًا قصيرًا أولًا.");state.applications[lessonKey()]=v;markStation(i);save();toast("تم حفظ تطبيقك ✍️");};
   if(i===7)bindQuiz("exitQuiz",l.exit,()=>{markStation(i);if($("exitNext"))$("exitNext").disabled=false;});
   if(i===8)bindChallenge(l,u);
